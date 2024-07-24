@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng ký tài khoản thẻ</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+          rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <style>
+        .form-container {
+          max-width: 700px;
+          margin: 150px auto;
+          padding: 20px;
+          border: 1px solid rgb(97, 97, 240);
+          border-radius: 15pt;
+        }
+        .form-title {
+          text-align: center;
+          font-style: normal;
+          color: #0245e1;
+          font-weight: bold;
+          margin-bottom: 20px;
+        }
+        .form-group{
+          color: #14171d;
+          font-style: normal;
+          font-weight: 500 ;
+          margin: 0 0 20px 0;
+        }
+        .form-control{
+          background-color: #dadee6;
+        }
+        .navbar{
+            background-image: linear-gradient(to right, #03008F, #625FFF, #ADABFF);
+        }
+        .offcanvas{
+            background-color: #03008F;
+        }
+        .error-message {
+          color: red;
+          font-size: 0.9em;
+          display: none;
+        }
+        .success input{
+          margin: 15px 0px 0 10px;
+          width: 150px;
+          height: fit-content;
+          color: #1b04e4;
+          background-color: white;
+          font-size: 25pt;
+          font-weight: 700;
+          border: 0;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar bg-body-tertiary navbar-dark fixed-top">
+        <div class="container-fluid">
+            <button class="navbar-toggler " type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <a class="navbar-brand" href="#">Visa master banking app</a>
+
+            <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel" style="width: 250px;">
+                <div class="offcanvas-header" style="color: white;">
+                    <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Visa master banking app</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/index}">Trang chủ</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" th:href="@{/signup}">Đăng ký tài khoản thẻ</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/member_list}">Thông tin thẻ</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/borrow_list}">Lịch sử giao dịch</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/import_book}">Nhập thông tin thẻ</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/manage_book}">Quản lý tài khoản</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+<div class="container">
+    <div class="form-container">
+        <h2 class="form-title">ĐĂNG KÝ TÀI KHOẢN THẺ</h2>
+        <form id="registrationForm" th:action="@{/signup}" th:object="${signup}" method="post">
+            <div class="form-group">
+                <label for="name">Họ và Tên:</label>
+                <input type="text" class="form-control" id="name" placeholder="Nhập họ và tên" th:field="*{fullname}" >
+                <div class="error-message" id="nameError">Vui lòng nhập đầy đủ họ và tên.(Không có các ký tự đặc biệt!)</div>
+            </div>
+            <div class="form-group">
+                <label for="cccd">Số thẻ:</label>
+                <input type="text" class="form-control" id="cccd" placeholder="Nhập số CCCD" th:field="*{cccd}" >
+                <div class="error-message" id="cccdError">Vui lòng nhập số thẻ</div>
+            </div>
+            <div class="form-group">
+                <label for="phone">Số điện thoại:</label>
+                <input type="text" class="form-control" id="phone" placeholder="Nhập số điện thoại" th:field="*{phone}" >
+                <div class="error-message" id="phoneError">Vui lòng nhập số điện thoại hợp lệ (10 số, bắt đầu bằng số 0).</div>
+            </div>
+            <!-- nút đăng kí và hủy  -->
+            <button type="button" class="btn" onclick="validateForm()" style="background-color: #0245e1; color: white; ">ĐĂNG KÍ</button>
+            <button type="button" class="btn btn-secondary" id="cancelButton">HỦY</button>
+
+            <!-- dòng thông báo  -->
+            <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="staticBackdropLabel">Thông báo</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <h2 style="text-align: center;">Bạn đăng ký thành công!</h2>
+                            <div style="display: flex; justify-content: center;  color: rgb(9, 10, 10);" class="success">
+                                <label for="registrationCode" style="padding-top:30px; font-size: 14pt;">Mã đăng kí của bạn là : </label>
+                                <input type="text" id="registrationCode" th:field="*{idmember}" readonly>
+                            </div>
+                        </div>
+                        <div class="modal-footer" >
+                            <button type="submit" class="btn btn-primary" data-bs-dismiss="modal" aria-label="Close">Xác nhận</button>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- đóng thông báo  -->
+        </form>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script>
+    function validateForm() { <!-- yêu cầu nhập số  -->
+          const name = document.getElementById('name').value;
+          const cccd = document.getElementById('cccd').value;
+          const phone = document.getElementById('phone').value;
+          let isValid = true;
+
+          if (!/^[a-zA-ZĐÁÀẠẢÃÂẬẤẦẪĂẮẰẲẴẶÈÉẺẼẸÊỀỂỆỄẾÌÍỈĨỊÒÓỎÕỌÔỒỐỔỘỖƠỚỜỞỠỢÙÚỦỤŨƯỨỪỬỰỮÝỲỶỸỴđáàạảãâậấầẫăắằẳẵặèéẻẽẹêềểệễếìíỉĩịòóỏõọôồốổộỗơớờởỡợùúủụũưứừửựữýỳỷỹy\s]+$/.test(name)) {
+            document.getElementById('nameError').style.display = 'block';
+            isValid = false;
+          } else {
+            document.getElementById('nameError').style.display = 'none';
+          }
+
+          if (!/^0\d{11}$/.test(cccd)) {
+            document.getElementById('cccdError').style.display = 'block';
+            isValid = false;
+          } else {
+            document.getElementById('cccdError').style.display = 'none';
+          }
+
+          if (!/^0\d{9}$/.test(phone)) {
+            document.getElementById('phoneError').style.display = 'block';
+            isValid = false;
+          } else {
+            document.getElementById('phoneError').style.display = 'none';
+          }
+
+          if (isValid) {
+            // Generate a unique registration code
+            const registrationCode = generateRegistrationCode();
+            document.getElementById('registrationCode').value = registrationCode;
+
+            // Trigger the modal
+            new bootstrap.Modal(document.getElementById('staticBackdrop')).show();
+          }
+      }
+
+      function generateRegistrationCode() {
+        const prefix = 'TV';
+        const randomNumber = Math.floor(10000 + Math.random() * 90000);
+        return prefix + randomNumber;
+      }
+
+      document.getElementById('cancelButton').addEventListener('click', function() {
+        document.getElementById('registrationForm').reset();
+        document.getElementById('nameError').style.display = 'none';
+        document.getElementById('cccdError').style.display = 'none';
+        document.getElementById('phoneError').style.display = 'none';
+      });
+</script>
+
+</body>
+</html>

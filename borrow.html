@@ -1,0 +1,120 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lịch sử giao dịch</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+          rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <style>
+        .navbar {
+            background-image: linear-gradient(to right, #03008F, #625FFF, #ADABFF);
+        }
+        .offcanvas {
+            background-color: #03008F;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar bg-body-tertiary navbar-dark fixed-top">
+    <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <a class="navbar-brand" href="#">Visa master banking app</a>
+
+        <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel" style="width: 250px;">
+            <div class="offcanvas-header" style="color: white;">
+                <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Visa master banking app</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body">
+                <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/index}">Trang chủ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/signup}">Đăng ký tài khoản thẻ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/member_list}">Thông tin thẻ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" th:href="@{/borrow_list}">Lịch sử giao dịch</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/import_book}">Nhập thông tin thẻ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/manage_book}">Quản lý tài khoản</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<br><br>
+
+<div id="wrapper">
+    <ul class="navbar-nav bg-gradient-nam sidebar sidebar-dark accordion" id="accordionSidebar">
+    </ul>
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+            </nav>
+            <div class="container-fluid">
+                <h1 class="h3 mb-2 text-gray-800">Lịch sử</h1>
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3 d-flex justify-content-between">
+                        <h6 class="m-0 font-weight-bold text-primary">Giao dịch đã thực hiện</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                <thead>
+                                <tr>
+                                    <th>Stt</th>
+                                    <th>Mã giao dịch</th>
+                                    <th>Tài khoản thụ hưởng</th>
+                                    <th>Tài khoản giao dịch</th>
+                                    <th>Số tiền</th>
+                                    <th>Ngày giao dịch</th>
+                                </tr>
+                                </thead>
+                                <tfoot>
+                                <tr>
+                                    <th>Stt</th>
+                                    <th>Mã giao dịch</th>
+                                    <th>Tài khoản thụ hưởng</th>
+                                    <th>Tài khoản giao dịch</th>
+                                    <th>Số tiền</th>
+                                    <th>Ngày giao dịch</th>
+                                </tr>
+                                </tfoot>
+                                <tbody>
+                                <tr th:each="borrow: ${borrowList}">
+                                    <td th:text="${borrow.id}">1</td>
+                                    <td th:text="${borrow.idmember}">DS001</td>
+                                    <td th:text="${borrow.fullname}">Tài khoản thụ hưởng</td>
+                                    <td th:text="${borrow.booklist}">Tài khoản giao dịch</td>
+                                    <td th:text="${borrow.booklist}">10.000</td>
+                                    <td th:text="${#dates.format(borrow.givebackdate, 'yyyy-MM-dd')}">2024-06-15</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- End Page Content -->
+        </div>
+        <!-- End Main Content -->
+    </div>
+    <!-- End Content Wrapper -->
+</div>
+<!-- End Page Wrapper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</body>
+</html>

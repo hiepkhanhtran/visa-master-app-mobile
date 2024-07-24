@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang chủ</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+          rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <style>
+        .navbar{
+            background-image: linear-gradient(to right, #03008F, #625FFF, #ADABFF);
+        }
+        .contain{
+            display: flex;
+            width: 100%;
+            margin-top: 40pt;
+            padding: 0;
+        }
+        .book{
+            width: 70%;
+        }
+        .searchbar{
+            display: flex;
+            position: fixed;
+            right: 0;
+            width: 30%;
+            height: 100vh;
+        }
+        .sign{
+            height: 100vh;
+            width: 50%;
+        }
+        .btn-book{
+            color: white;
+            width: 100%;
+            font-weight: 600;
+            font-size: 12pt;
+            padding: 10px;
+        }
+        .btn-book:active{
+            background-color: #0300be;
+            border: 2px solid #0300be;
+        }
+        .borrow-btn{
+            background-color: #0300be;
+            border: 2px solid #0300be;
+        }
+        .give-back-btn{
+            background-color: #ADABFF;
+            border: 2px solid #cccbff;
+        }
+        .form-borrow, .form-give-back{
+            position: absolute;
+            left: 0;
+            background-color: #0300be;
+        }
+        .form-borrow{
+            display: block;
+            width: 100%;
+            height: 86vh;
+        }
+        form{
+            width: 85%;
+            height: 95%;
+            margin: 1px auto;
+        }
+        .form-item{
+            padding: 10px;
+        }
+        .form-item label{
+            color: white;
+            font-weight: 600;
+            font-size: 12pt;
+        }
+        .form-item input{
+            padding: 5px;
+            margin-top: 10px;
+            width: 100%;
+            background-color: white;
+            border: 2px solid #01004b;
+            border-radius: 5px;
+        }
+        .form-item button{
+            color: rgb(0, 0, 0);
+            background-color: #ffffff;
+            font-weight: 700;
+            font-size: 10pt;
+            padding: 7px;
+            width: 90px;
+            border: 2px solid #01004b;
+            border-radius: 5px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+        .form-item button:active{
+            background-color: rgb(150, 150, 150);
+            color: #ffffff;
+        }
+        .form-give-back{
+            display: none;
+            width: 100%;
+            height: 86vh;
+        }
+        .card{
+            margin: 40px auto;
+            max-width: 60%;
+            border: 2px solid #02007d;
+            border-radius: 10px;
+        }
+        .card-body{
+            height: 100%;
+        }
+        .lend-btn{
+            border: 0;
+            background-color: rgb(220, 220, 220);
+            font-weight: 600;
+            border-radius: 5pt;
+            padding: 7px;
+            width: 80px;
+        }
+        .lend-btn:active{
+            background-color: #0300be;
+            color: #ffffff;
+        }
+        .img-fluid{
+            border-radius: 10px;
+            width: fit-content; height: 290px; object-fit: contain;
+        }
+        .BorrowTable{
+            overflow-y: scroll;
+            width: 100%;
+            height: 150px;
+            text-align: center;
+            border-radius: 5px;
+            border: 2px solid #01004b;
+            resize: none;
+        }
+
+        #note {
+            width: 300px;
+            overflow: hidden;
+        }
+        #note strong {
+            position: relative;
+            display: inline-block;
+            animation: mymove 7s infinite;
+            animation-timing-function: linear;
+        }
+        @keyframes mymove {
+            from {left: -100%;}
+            to {left: 100%;}
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar bg-body-tertiary navbar-dark fixed-top" style="max-width: 100%;">
+    <div class="container-fluid">
+        <div id="note">
+            <strong style="color: white; font-size: 14pt;">Giao dịch tiện lợi bằng thẻ visa master có gắn chip</strong>
+        </div>
+        <a class="navbar-brand" href="#">Visa master banking app</a>
+    </div>
+</nav>
+
+
+<div class="contain">
+    <div class="book">
+        <!-- san pham -->
+        <div class="card" th:each="book : ${books}">
+            <div class="row g-0">
+                <div class="col-md-4">
+                    <img th:src="@{${book.imageurl}}" class="img-fluid" alt="Thẻ">
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body container-fluid">
+                        <h5 class="card-title" style="margin: 10px 0 10px 0; font-size: 18pt;" th:text="${book.namebook}"></h5>
+                        <p class="card-text" style="margin: 10px 0 10px 0; font-size: 15pt;" th:text="${book.author}"></p>
+                        <button class="lend-btn" type="button" onclick="selectBook(this)">Chọn</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="searchbar">
+        <div class="sign">
+            <button type="button" class="borrow-btn btn-book" id="borrow-btn">
+                Thêm tài khoản thẻ
+            </button>
+            <div class="form-borrow" id="form-borrow">
+                <form th:action="@{/index}" th:object="${list}" method="post">
+                    <div class="form-item">
+                        <label for="memberCodeBR">Tên chủ thẻ</label><br>
+                        <input type="text" th:field="*{idmember}" name="membercode" id="memberCodeBR" required placeholder="Nguyễn Văn A"><br>
+                    </div>
+                    <div class="form-item">
+                        <label for="memberNameBR">Số thẻ</label><br>
+                        <input type="text" th:field="*{fullname}" name="membername" id="memberNameBR" readonly ><br>
+                    </div>
+                    <div class="form-item">
+                        <label for="dateBorrowBR">Ngày hiệu lực</label><br>
+                        <input type="date" th:field="*{borrowdate}" name="dateborrow" id="dateBorrowBR"><br>
+                    </div>
+                    <div class="form-item">
+                        <label for="dateReturnBR">Ngày hết hạn</label><br>
+                        <input type="date" th:field="*{givebackdate}" name="datereturn" id="dateReturnBR"><br>
+                    </div>
+                    <div class="form-item">
+                        <button type="submit">Kiểm tra thông tin</button><br>
+                    </div>
+                    <div class="form-item">
+                        <textarea th:field="*{booklist}" name="" class="BorrowTable" id="BorrowTable" readonly></textarea>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="sign">
+            <button type="button" class="give-back-btn btn-book" id="give-back-btn">
+                Xem thông tin tài khoản thẻ
+            </button>
+            <div class="form-give-back" id="form-give-back">
+                <form th:action="@{/api/lists/idmember}" method="post">
+                    <div class="form-item">
+                        <label for="memberCodeGB">Tên chủ thẻ</label><br>
+                        <input type="text" name="membercode" id="memberCodeGB" required placeholder="Nguyễn Văn A"><br>
+                    </div>
+                    <div class="form-item">
+                        <label for="memberNameGB">Số thẻ</label><br>
+                        <input type="text" name="membername" id="memberNameGB" readonly><br>
+                    </div>
+                    <div class="form-item">
+                        <label for="dateBorrowGB">Ngày hiệu lực</label><br>
+                        <input type="date" name="dateborrow" id="dateBorrowGB" readonly><br>
+                    </div>
+                    <div class="form-item">
+                        <label for="dateReturnGB">Ngày hết hạn</label><br>
+                        <input type="date" name="datereturn" id="dateReturnGB" readonly><br>
+                    </div>
+                    <div class="form-item">
+                        <button type="submit">Cập nhật</button><br>
+                    </div>
+                    <div class="form-item">
+                        <textarea name="" class="BorrowTable" id="GiveBackTable" readonly></textarea>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script>
+    function selectBook(button) {
+        const bookTitle = button.closest('.card-body').querySelector('.card-title').innerText;
+        document.getElementById('BorrowTable').innerHTML += bookTitle + '\n';
+    }
+
+
+    document.getElementById('memberCodeBR').addEventListener('blur', function() {
+        const memberCode = this.value;
+        if (memberCode) {
+            fetch(`/api/members/${memberCode}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Member not found');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    document.getElementById('memberNameBR').value = data.fullname;
+                    document.getElementById('memberNameBR').style.color = 'black'; // Đặt lại màu chữ nếu tìm thấy thành viên
+                })
+                .catch(error => {
+                    document.getElementById('memberNameBR').value = 'Mã thành viên không hợp lệ';
+                    document.getElementById('memberNameBR').style.color = 'red'; // Đổi màu chữ để hiển thị lỗi
+                    console.error('Error fetching member:', error);
+                });
+        }
+    });
+
+    document.getElementById('memberCodeGB').addEventListener('blur', function() {
+        const memberCode = this.value;
+        if (memberCode) {
+            fetch(`/api/lists/${memberCode}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Member not found');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    document.getElementById('memberNameGB').value = data.fullname;
+                    document.getElementById('memberNameGB').style.color = 'black'; // Đặt lại màu chữ nếu tìm thấy thành viên
+                    document.getElementById('dateBorrowGB').value = data.borrowdate;
+                    document.getElementById('dateBorrowGB').style.color = 'black';
+                    document.getElementById('dateReturnGB').value = data.givebackdate;
+                    document.getElementById('dateReturnGB').style.color = 'black';
+                    document.getElementById('GiveBackTable').value = data.booklist;
+                    document.getElementById('GiveBackTable').style.color = 'black';
+                })
+                .catch(error => {
+                    document.getElementById('memberNameBR').value = 'Mã thành viên không hợp lệ';
+                    document.getElementById('memberNameBR').style.color = 'red'; // Đổi màu chữ để hiển thị lỗi
+                    console.error('Error fetching member:', error);
+                });
+        }
+    });
+
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+    const day = currentDate.getDate().toString().padStart(2, '0');
+
+    const inputDateBR = document.getElementById('dateBorrowBR');
+    const inputDateGB = document.getElementById('dateReturnGB');
+    inputDateBR.value = `${year}-${month}-${day}`;
+    inputDateGB.value = `${year}-${month}-${day}`;
+
+    document.getElementById('borrow-btn').addEventListener('click', function() {
+        document.getElementById('borrow-btn').style.backgroundColor = '#0300be';
+        document.getElementById('borrow-btn').style.border = '2px solid #0300be';
+        document.getElementById('form-borrow').style.display = 'block';
+        document.getElementById('give-back-btn').style.backgroundColor = '#ADABFF';
+        document.getElementById('give-back-btn').style.border = '2px solid #cccbff';
+        document.getElementById('form-give-back').style.display = 'none';
+    });
+    document.getElementById('give-back-btn').addEventListener('click', function() {
+        document.getElementById('give-back-btn').style.backgroundColor = '#0300be';
+        document.getElementById('give-back-btn').style.border = '2px solid #0300be';
+        document.getElementById('form-give-back').style.display = 'block';
+        document.getElementById('borrow-btn').style.backgroundColor = '#ADABFF';
+        document.getElementById('borrow-btn').style.border = '2px solid #cccbff';
+        document.getElementById('form-borrow').style.display = 'none';
+    });
+</script>
+</body>
+</html>
